@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from Bio.Seq import reverse_complement
-import errors
+import bridge_evaluator.errors as errors
 import re
+
 
 class BridgeRNAScaffold(ABC):
     """

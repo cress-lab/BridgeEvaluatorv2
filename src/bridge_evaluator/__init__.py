@@ -7,11 +7,11 @@ import heapq
 import subprocess, textwrap
 import RNA
 from collections import Counter
-from classes import SCAFFOLD_NAME_TO_CLASS
+from bridge_evaluator.classes import SCAFFOLD_NAME_TO_CLASS
 
 #author: Jaymin Patel jayman1466@gmail.com
 VERSION = "1.0.0"
-__all__ = ["design_bridges"]
+__all__ = ["iterate_bridge_design", "single_bridge_design", "off_target_assess", "find_unique_targets"]
 
 #wrapper to design the IS621 bridgeRNA using Matt's script https://github.com/hsulab-arc/BridgeRNADesigner
 def design_bridge_rna(target, donor, scaffold):
@@ -246,15 +246,15 @@ def iterate_bridge_design(target_locus, locus_name, **kwargs):
 
                 #create dict to hold data for this target site
                 this_target_data = {}
-                this_target_data['target_gene'] = locus_name
+                this_target_data['locus_name'] = locus_name
                 if feature_type != "":
                     this_target_data['feature_type'] = feature_type
                 this_target_data['donor_seq'] = donor_seq
 
                 #create name for bridge
-                bridge_name = f"bridge_IS621_T_{locus_name}_{i}_D_{donor_name}"
+                bridge_name = f"bridge_{scaffold}_T_{locus_name}_{i}_D_{donor_name}"
                 this_target_data['bridge_name'] = bridge_name
-
+                this_target_data['scaffold'] = scaffold
                 #check if this target is on the + or - strand and then pull out the target sequence 
                 if target_index_array[1] == '+':
                     this_target_seq = target_seq[target_index-include_left:target_index] + core + target_seq[target_index + len(core): target_index + len(core) + include_right]
@@ -354,6 +354,7 @@ def single_bridge_design(target_seq, **kwargs):
     this_target_data = {}
     this_target_data['target_seq'] = target_seq #sequence of target
     this_target_data['donor_seq'] = donor_seq #sequence of donor
+    this_target_data['scaffold'] = scaffold #scaffold of target
     this_target_data['core'] = core #core of target
 
     #design the bridge
